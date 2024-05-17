@@ -71,6 +71,20 @@ mod test {
 
         assert_eq!(read_user, user_0);
 
+        // Write another user to the DB, this should be a new file.
+        let user_1 = User {
+            id: 1,
+            name: "Alice".into(),
+            age: 30,
+        };
+        let user_json_1 = serde_json::to_string(&user_1).unwrap();
+        db.write(user_1.id, &user_json_1.as_bytes()).unwrap();
+
+        let result_1 = db.read(user_1.id).unwrap();
+        let read_user_1: User = serde_json::from_str(&result_1).unwrap();
+
+        assert_eq!(read_user_1, user_1);
+
         remove_dir_all(test_folder).unwrap();
     }
 }
